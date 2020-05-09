@@ -1,10 +1,11 @@
 <template>
   <div class="m-4 p-4 bg-white shadow rounded">
     <h2 class="text-2xl text-center text-darkGray">アカウント登録</h2>
-    <form>
+    <form @submit.prevent="onSubmit">
       <div class="flex items-center justify-center flex-col w-full h-full mt-8">
         <div
           class="flex items-center justify-center w-32 h-32 bg-gray-200 rounded-full border border-gray-400 "
+          :class="{ 'border-red-500': form.imageUrl.errorMessage }"
         >
           <template v-if="form.imageUrl.val">
             <img
@@ -26,19 +27,29 @@
             @change="onSelectFile"
           />
         </div>
+        <span v-show="form.imageUrl.errorMessage" class="text-red text-sm">{{
+          form.imageUrl.errorMessage
+        }}</span>
       </div>
       <label
         class="block mt-8 mb-2 ml-2 uppercase tracking-wide text-darkGray text-s"
+        :class="{ 'border-red-500': form.name.errorMessage }"
       >
         名前
       </label>
       <div class="h-20 mb-6">
+        <!-- blur イベントは、要素がフォーカスを失ったときに発生 -->
         <input
+          v-model="form.name.val"
           type="text"
+          :class="{ 'border-red-500': form.name.errorMessage }"
           class="block w-full py-3 px-4 appearance-none bg-gray-200 text-darkGray border rounded leading-tight focus:outline-none focus:bg-white"
+          @blur="validateName"
         />
+        <span v-show="form.name.errorMessage" class="text-red text-sm">{{
+          form.name.errorMessage
+        }}</span>
       </div>
-
       <div class="flex">
         <button
           class="w-full p-3 gradation rounded-full text-white
@@ -55,8 +66,15 @@ export default {
   data() {
     return {
       form: {
+        name: {
+          label: "名前",
+          val: null,
+          errorMessage: null
+        },
         imageUrl: {
-          val: null
+          label: "アイコン画像",
+          val: null,
+          errorMessage: null
         }
       }
     };
@@ -99,6 +117,39 @@ export default {
       const snapShot = await imageRef.put(localImageFile);
       // アップロードしたURLをdata()に設定
       this.form.imageUrl.val = await snapShot.ref.getDownloadURL();
+
+      this.validateImageUrl();
+    },
+    validateName() {
+      // const{}はオブジェクトの分割代入
+      const { name } = this.form;
+      const maxLength = 8;
+
+      if (!name.val) {
+        name.errorMessage = `${name.label}は必須入力項目です`;
+        return;
+      }
+
+      if (name.val.length > maxLength) {
+        name.errorMessage = `${name.label}は${maxLength}文字以内です`;
+        return;
+      }
+
+      name.errorMessage = null;
+    },
+    validateImageUrl() {
+      const { imageUrl } = this.form;
+
+      if (!imageUrl.val) {
+        imageUrl.errorMessage = `${imageUrl.label}は必須入力項目です`;
+        return;
+      }
+
+      imageUrl.errorMessage = null;
+    },
+    onSubmit() {
+      this.validateName();
+      this.validateImageUrl();
     }
   }
 };
