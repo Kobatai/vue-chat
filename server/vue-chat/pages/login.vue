@@ -6,7 +6,8 @@
       <div class="w-full border-b pb-2 mb-10">
         <p class="text-center">ログイン</p>
       </div>
-      <form class="w-full">
+      <!-- submitの本来の処理でページがリロードされないように.prevent -->
+      <form class="w-full" @submit.prevent="onSubmit">
         <button
           type="submit"
           class="w-full bg-google py-3 px-10 text-white rounded focus:outline-none focus:shadow-outline border"
@@ -17,3 +18,17 @@
     </div>
   </div>
 </template>
+
+<script>
+export default {
+  middleware: ["checkLogin"],
+  methods: {
+    onSubmit() {
+      // firebaseのGoogleログイン用のプロバイダーを作成
+      const provider = new this.$firebase.auth.GoogleAuthProvider();
+      // $fireAuthで受け取ったプロバイダーのログイン画面にリダイレクト
+      this.$fireAuth.signInWithRedirect(provider);
+    }
+  }
+};
+</script>

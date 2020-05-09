@@ -9,6 +9,9 @@ if (!firebase.apps.length) {
   firebase.initializeApp({ ...config });
 }
 
+// 注入先は二種類　Vue インスタンス（クライアントサイド） コンテキスト（サーバーサイド）
+// これはコンテキストからvueインスタンスへの注入
+// injectはルートの Vue.js アプリケーションがインスタンス化される前に実行される
 export default ({ app }, inject) => {
   inject("firebase", firebase);
   inject("firestore", firebase.firestore());
