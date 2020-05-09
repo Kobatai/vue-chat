@@ -6,4 +6,5 @@ RUN apk update && \
 	npm install && \
     npm install -g npm && \
     npm install -g npm @vue/cli \
-    npm install -g create-nuxt-app
+    npm install -g create-nuxt-app \
+    npm install -g firebase-tools 
