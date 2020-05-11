@@ -26,9 +26,5 @@ service cloud.firestore {
                     && isNotEmpty("name")
                     && isNotEmpty("iconImageUrl");
     }
-
-    match /{document=**} {
-      allow read, write: if request.time < timestamp.date(2020, 6, 8);
-    }
   }
 }
