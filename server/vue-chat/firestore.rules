@@ -3,28 +3,28 @@ service cloud.firestore {
   match /databases/{database}/documents {
 
     function isAuth() {
-      return request.auth.uid != null
+      return request.auth.uid != null;
     }
 
     function isUserAuth(userId) {
       return request.auth.uid == userId
     }
 
-    function require(param) {
-      return request.resourse.data[param] != null
+    function require(param){
+      return request.resource.data[param] != null
     }
 
-    function isNotEmpty(param) {
+    function isNotEmpty(param){
       return require(param)
-            && request.resource.data[param] is string
-            && request.resource.data[param].trim().size() != 0;
+              && request.resource.data[param] is string
+              && request.resource.data[param].trim().size() != 0;
     }
 
     match /users/{userId} {
       allow get : if isAuth();
       allow create: if isUserAuth(userId)
-                    && isNotEmpty("name")
-                    && isNotEmpty("iconImageUrl");
+              && isNotEmpty("name")
+              && isNotEmpty("iconImageUrl");
     }
   }
 }
