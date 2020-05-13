@@ -62,6 +62,8 @@
   </div>
 </template>
 <script>
+import { mapMutations } from "vuex";
+
 export default {
   data() {
     return {
@@ -85,6 +87,9 @@ export default {
     }
   },
   methods: {
+    // storeのsetMessageをマッピング
+    ...mapMutations("alert", ["setMessage"]),
+
     // display:noneで消えているinputタグをクリックしたことにする
     selectImage() {
       // this.$refs.属性名でDOMにアクセスしてイベント発火
@@ -175,7 +180,8 @@ export default {
         this.$router.push("/");
       } catch (e) {
         // エラーキャッチ
-        console.log(e);
+        // マッピングされているのでthis.で呼び出せる
+        this.setMessage({ message: "登録に失敗しました。" });
       }
     }
   }
