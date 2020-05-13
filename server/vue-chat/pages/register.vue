@@ -79,6 +79,11 @@ export default {
       }
     };
   },
+  computed: {
+    isValidateError() {
+      return this.form.name.errorMessage || this.form.imageUrl.errorMessage;
+    }
+  },
   methods: {
     // display:noneで消えているinputタグをクリックしたことにする
     selectImage() {
@@ -147,9 +152,31 @@ export default {
 
       imageUrl.errorMessage = null;
     },
-    onSubmit() {
+    async onSubmit() {
+      const user = await this.$auth();
+
+      // 未ログインの場合
+      if (!user) this.$router.push("/login");
+
       this.validateName();
       this.validateImageUrl();
+
+      // computedプロパティでエラーメッセージがあればreturn
+      if (this.isValidateError) return;
+
+      try {
+        await this.$firestore
+          .collection("users")
+          .doc(user.uid)
+          .set({
+            name: this.form.name.val,
+            iconImageUrl: this.form.imageUrl.val
+          });
+        this.$router.push("/");
+      } catch (e) {
+        // エラーキャッチ
+        console.log(e);
+      }
     }
   }
 };
