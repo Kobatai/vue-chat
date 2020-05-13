@@ -65,6 +65,8 @@
 import { mapMutations } from "vuex";
 
 export default {
+  // register.vueがレンダリングされる前にすでに登録されているかmiddlewareでチェック
+  middleware: ["checkRegister"],
   data() {
     return {
       form: {
