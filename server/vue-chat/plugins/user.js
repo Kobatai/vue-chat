@@ -17,7 +17,7 @@ export default ({ app, redirect }, inject) => {
 
     return {
       uid: auth.uid,
-      // arrayであるレストパラメータで渡す
+      // arrayのレストパラメータで渡す
       ...user
     };
   });
