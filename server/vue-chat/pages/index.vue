@@ -1,11 +1,21 @@
 <template>
   <div>
+    <div>
+      <div
+        v-for="room in rooms"
+        :key="room.id"
+        class="bg-white max-w-sm rounded-lg overflow-hidden shadow m-4 mb-5 p-4 h-32"
+      >
+        <div>
+          <img :src="room.topImageUrl" class="float-left object-cover rounded-lg w-24 h-24 mr-4" />
+          <p class="font-mono text-darkGray">{{ room.name }}</p>
+        </div>
+      </div>
+    </div>
     <!-- ルーム作成ボタン -->
     <div class="fixed flex justify-end bottom-0 w-full max-w-sm">
       <button @click="openModal">
-        <i class="material-icons text-primary text-7xl create-btn gradation">
-          add_circle
-        </i>
+        <i class="material-icons text-primary text-7xl create-btn gradation">add_circle</i>
       </button>
     </div>
 
@@ -18,6 +28,7 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 import ModalBase from "~/components/ModalBase";
 import CreateRoomModal from "~/components/CreateRoomModal";
 
@@ -29,8 +40,25 @@ export default {
   },
   data() {
     return {
-      isCreateMode: false
+      isCreateMode: false,
+      unsubscribe: null
     };
+  },
+  computed: {
+    ...mapGetters("rooms", ["rooms"])
+  },
+  async asyncData({ store }) {
+    // storeのactionを呼び出すのはdispatch
+    // mutationはcommit store.commit ex) this.$store.commit("auth/setLoginErrorMessages", null);
+    // stateの取得はgetters ex) this.$store.getters["auth/check"];
+    const unsubscribe = await store.dispatch("room/subscribe");
+    return {
+      unsubscribe
+    };
+  },
+  destroyed() {
+    this.$store.dispatch("rooms/clear");
+    if (this.unsubscribe) this.unsubscribe();
   },
   methods: {
     openModal() {
