@@ -51,7 +51,7 @@ export default {
     // storeのactionを呼び出すのはdispatch
     // mutationはcommit store.commit ex) this.$store.commit("auth/setLoginErrorMessages", null);
     // stateの取得はgetters ex) this.$store.getters["auth/check"];
-    const unsubscribe = await store.dispatch("room/subscribe");
+    const unsubscribe = await store.dispatch("rooms/subscribe");
     return {
       unsubscribe
     };
